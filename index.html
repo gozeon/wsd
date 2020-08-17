@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/babel-standalone/7.0.0-beta.3/babel.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+  </head>
+
+  <body>
+    <script type="text/babel">
+      function appendLine(data, type = 'p') {
+        const typeEl = document.createElement(type)
+        const txtEl = document.createTextNode(data)
+
+        typeEl.appendChild(txtEl)
+        document.body.appendChild(typeEl)
+      }
+
+      if (WebSocket) {
+        const ws = new WebSocket('ws://localhost:8080/')
+
+        ws.onopen = function (e) {
+          appendLine('[open] Connection established')
+          window.ws = ws
+        }
+
+        ws.onmessage = function (e) {
+          appendLine('[message] Data received from server')
+          console.log(e.data)
+          try {
+            const formatMessage = JSON.parse(e.data)
+            console.log(formatMessage)
+            appendLine(formatMessage.data, formatMessage.type)
+          } catch (e) {
+            console.log(e.message)
+            appendLine(e.data)
+          }
+        }
+
+        ws.onclose = function (e) {
+          appendLine('[close] Connection died')
+        }
+
+        ws.onerror = function (err) {
+          appendLine(`[close] ${err.message}`)
+        }
+      }
+
+      function log(msg) {
+        let currentMsg = {
+          data: 'demo',
+          type: 'p', // p | pre | code
+        }
+
+        if (_.isString(msg)) {
+          currentMsg = _.assign({}, currentMsg, {
+            data: msg,
+          })
+        }
+
+        if (_.isObject(msg)) {
+          currentMsg = _.assign({}, currentMsg, msg)
+        }
+
+        if (window.ws) {
+          ws.send(JSON.stringify(currentMsg))
+        } else {
+          console.log(currentMsg)
+        }
+      }
+    </script>
+  </body>
+</html>

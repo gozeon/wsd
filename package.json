@@ -6,10 +6,6 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/gozeon/iris.git"
-  },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged"
@@ -22,11 +18,10 @@
   ],
   "author": "goze",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/gozeon/iris/issues"
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.3.1"
   },
-  "homepage": "https://github.com/gozeon/iris#readme",
-  "dependencies": {},
   "devDependencies": {
     "husky": "^4.2.5",
     "prettier": "^2.0.5",
