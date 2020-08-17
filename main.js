@@ -6,16 +6,26 @@ const wss = new WebSocket.Server({
   port: 8080,
 })
 
-wss.on('connection', function (ws) {
+wss.on('connection', function (ws, req) {
+  // 给他个表示别
+  ws.id = req.headers['sec-websocket-key']
+  console.log(ws)
+
   ws.on('message', function (message) {
-    console.log('received', message)
+    wss.clients.forEach((w) => {
+      console.log(w.id)
+    })
     ws.send(message)
+
+    console.log(ws.id, JSON.stringify(message))
+  })
+
+  ws.on('pong', function () {
+    console.log('pong')
   })
 })
 
-wss.on('message', function (mes) {
-  console.log(mes)
-})
+wss.on('close', function (ws) {})
 
 server.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html')
