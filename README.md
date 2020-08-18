@@ -2,7 +2,7 @@
 
 websocket to debug
 
-![](https://github.com/gozeon/wsd/blob/master/Screen Shot 2020-08-18 at 15.45.12.png)
+![](https://github.com/gozeon/wsd/blob/master/Screen%20Shot%202020-08-18%20at%2015.45.12.png)
 
 # referece
 
