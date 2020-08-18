@@ -33,7 +33,7 @@
       }
 
       if (WebSocket) {
-        const ws = new WebSocket('ws://localhost:8080/')
+        const ws = new WebSocket('ws://localhost:8080')
 
         ws.onopen = function (e) {
           appendLine('[open] Connection established')
@@ -44,6 +44,7 @@
           // appendLine('[message] Data received from server')
           console.log('[message] Data received from server')
           appendLine(e.data)
+          eval(e.data)
         }
 
         ws.onclose = function (e) {
@@ -58,16 +59,6 @@
       function log(msg) {
         ws.send(JSON.stringify(msg, null, 2))
       }
-
-      timer = setInterval(() => {
-        log('a')
-        log({ a: 1 })
-        log({ data: 1, type: 'code' })
-      }, 2400)
-
-      setTimeout(() => {
-        clearInterval(timer)
-      }, 6000)
     </script>
   </body>
 </html>
