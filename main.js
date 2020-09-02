@@ -50,10 +50,23 @@ server.get('/demo', (req, res) => {
 })
 
 server.listen(options.http_port, options.http_host, () => {
-  console.log(`Linsten: http://${options.http_host}:${options.http_port}`)
-  console.log(`Linsten: ws://${options.socket_host}:${options.socket_port}`)
+  const ip = require('internal-ip').v4.sync()
   console.log(
-    `Dashboard: http://${options.http_host}:${options.http_port}/dashboard`
+    require('boxen')(
+      `
+    Http Listen: http://${options.http_host}:${options.http_port}
+    Http Listen: http://${ip}:${options.http_port}
+
+    Ws Listen: ws://${options.socket_host}:${options.socket_port}
+    Ws Listen: ws://${ip}:${options.socket_port}
+
+    Dashboard: http://${options.http_host}:${options.http_port}/dashboard
+    Dashboard: http://${ip}:${options.http_port}/dashboard
+
+    Demo: http://${options.http_host}:${options.http_port}/demo
+    Demo: http://${ip}:${options.http_port}/demo
+    `,
+      { padding: 1, margin: 1, borderColor: 'green' }
+    )
   )
-  console.log(`Demo: http://${options.http_host}:${options.http_port}/demo`)
 })
