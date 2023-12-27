@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>log</h1>
+    <button onclick="log(1)">log(1)</button>
+    <button onclick="log('a')">log('a')</button>
+    <button onclick="log([1, 2])">log([1, 2])</button>
+    <button onclick="log({a: 1})">log({a: 1})</button>
+    <h1>get code</h1>
+    <button id="startGetCode">start get code</button>
+    <button id="endCode">end code</button>
+    <textarea name="" id="code" cols="30" rows="10"></textarea>
+
+    <script src="https://www.unpkg.com/jquery"></script>
+
+    <script>
+        const baseurl = "http://127.0.0.1:8082"
+        function log(obj) {
+            $.ajax({
+                url: `${baseurl}/log`,
+                dataType: "jsonp",
+                data: {
+                    log: JSON.stringify(obj)
+                }
+            });
+        }
+
+        var timer = null
+        $(function () {
+
+            $('button#log').click(function () {
+                log($('#txt').val())
+            })
+
+
+            $('button#startGetCode').click(function () {
+                timer = setInterval(function () {
+                    $.ajax({
+                        url: `${baseurl}/code`,
+                        dataType: "jsonp",
+                        success: function (res) {
+                            
+                            if(res?.js) {
+                                $('#code').val( $('#code').val() + "\n" + res.js)
+
+                                eval(res.js)
+                            }
+                        }
+                    });
+                }, 1000)
+            })
+
+            $('button#endCode').click(function () {
+                if (timer) {
+                    clearInterval(timer)
+                }
+            })
+
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>log</h1>
+    <div id="log"></div>
+
+    <button onclick="startLog()">start</button>
+    <button onclick="endLog()">end</button>
+    <h1>send code</h1>
+    <textarea name="code" id="code" cols="30" rows="10"></textarea>
+    <button onclick="sendcode()">send code</button>
+
+    <script>
+
+        function sendcode() {
+            fetch('/code', {
+                method: 'post',
+                headers: {
+                    'Content-Type': "application/json"
+                },
+                body: JSON.stringify({
+                    code: document.querySelector('#code').value
+                })
+            }).then(r => r.json()).then(r => {
+                console.log(r)
+            })
+        }
+
+        var timer = null
+
+        function startLog() {
+            timer = setInterval(() => {
+                fetch('/slog').then(res => res.json()).then(r => {
+                    console.log(r)
+                    const {logs} = r
+                    if(logs) {
+                        document.querySelector('#log').innerHTML = (r?.logs.map(item => `<p style="border: 1px solid;">${item}</p>`)).join('\n')
+                    }
+                })
+            }, 3000)
+        }
+        function endLog() {
+            if (timer) {
+                clearInterval(timer)
+            }
+        }
+    </script>
+</body>
+
+</html>
