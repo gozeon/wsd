@@ -16,7 +16,7 @@
     <h1>get code</h1>
     <button id="startGetCode">start get code</button>
     <button id="endCode">end code</button>
-    <textarea name="" id="code" cols="30" rows="10"></textarea>
+    <div id="code"></div>
 
     <script src="https://www.unpkg.com/jquery"></script>
 
@@ -46,10 +46,8 @@
                         url: `${baseurl}/code`,
                         dataType: "jsonp",
                         success: function (res) {
-                            
+                            $('#code').prepend($('<p></p>').text(JSON.stringify(res)))
                             if(res?.js) {
-                                $('#code').val( $('#code').val() + "\n" + res.js)
-
                                 eval(res.js)
                             }
                         }
@@ -58,6 +56,7 @@
             })
 
             $('button#endCode').click(function () {
+                $('#code').empty()
                 if (timer) {
                     clearInterval(timer)
                 }

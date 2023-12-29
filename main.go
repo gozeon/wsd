@@ -5,11 +5,17 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
-var logs []string
+type Log struct {
+	Msg  string
+	Time time.Time
+}
+
+var logs []Log
 var js string
 
 //go:embed ui
@@ -33,7 +39,7 @@ func main() {
 	r.GET("/log", func(ctx *gin.Context) {
 		log, hasLog := ctx.GetQuery("log")
 		if hasLog {
-			logs = append(logs, log)
+			logs = append(logs, Log{Msg: log, Time: time.Now()})
 		}
 		ctx.JSONP(http.StatusOK, gin.H{
 			"msg": "ok",
@@ -41,9 +47,13 @@ func main() {
 	})
 
 	r.GET("/slog", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"logs": logs,
-		})
+		if len(logs) == 0 {
+			ctx.String(http.StatusOK, "")
+			return
+		}
+		log := logs[0]
+		ctx.String(http.StatusOK, fmt.Sprintf("<b>%2d:%2d:%2d</b>  %s", log.Time.Hour(), log.Time.Minute(), log.Time.Second(), log.Msg))
+		logs = logs[1:]
 	})
 
 	r.POST("/code", func(ctx *gin.Context) {

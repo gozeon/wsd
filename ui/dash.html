@@ -8,14 +8,27 @@
 </head>
 
 <body>
-    <h1>log</h1>
-    <div id="log"></div>
 
+    <h1>send code</h1>
+    <div id="editor" style="min-height: 200px;"></div>
+    <button onclick="sendcode()">send code</button>
+
+    <h1>log</h1>
     <button onclick="startLog()">start</button>
     <button onclick="endLog()">end</button>
-    <h1>send code</h1>
-    <textarea name="code" id="code" cols="30" rows="10"></textarea>
-    <button onclick="sendcode()">send code</button>
+    <div id="log"></div>
+
+
+    <script type="module">
+        import { EditorView, basicSetup } from "https://esm.sh/codemirror"
+        import { javascript } from "https://esm.sh/@codemirror/lang-javascript"
+
+
+        window.editor = new EditorView({
+            extensions: [basicSetup, javascript()],
+            parent: document.querySelector('#editor')
+        })
+    </script>
 
     <script>
 
@@ -26,7 +39,7 @@
                     'Content-Type': "application/json"
                 },
                 body: JSON.stringify({
-                    code: document.querySelector('#code').value
+                    code: editor.state.doc.toString()
                 })
             }).then(r => r.json()).then(r => {
                 console.log(r)
@@ -37,19 +50,20 @@
 
         function startLog() {
             timer = setInterval(() => {
-                fetch('/slog').then(res => res.json()).then(r => {
-                    console.log(r)
-                    const {logs} = r
-                    if(logs) {
-                        document.querySelector('#log').innerHTML = (r?.logs.map(item => `<p style="border: 1px solid;">${item}</p>`)).join('\n')
-                    }
+                fetch('/slog').then(res => res.text()).then(log => {
+                    let p = document.createElement('p')
+                    p.style.border = '1px solid'
+                    p.innerHTML = log
+                    document.querySelector('#log').prepend(log ? p : '')
                 })
-            }, 3000)
+            }, 1000)
         }
         function endLog() {
+            console.log(timer)
             if (timer) {
                 clearInterval(timer)
             }
+            document.querySelector('#log').replaceChildren();
         }
     </script>
 </body>
